@@ -39,7 +39,7 @@ public class Main {
             return name.hashCode() * date.hashCode();
         }
     }
-
+    /*Generate the id of a created event, once generated the id will not change*/
     private static String getRandomId() {
         String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         Random random = new Random();
@@ -55,6 +55,7 @@ public class Main {
         get("/today/day", (req, res) -> getDay());
         get("/today/month", (req, res) -> getMonth());
         get("/today/year", (req, res) -> getYear());
+        /*Function: adding an events, return the event id generated*/
         post("/events", (req, res)-> {
             Gson gson = new Gson();
             Event toAdd = gson.fromJson(req.body(), Event.class);
@@ -76,6 +77,7 @@ public class Main {
             }
             return "[Success]Event added with id:" + toAdd.hashCode();
         });
+        /*Function: updating an events given the event id*/
         put("/events", (req, res)-> {
             String id = req.queryParams("id");
             System.out.println("update id: "+ id);
@@ -87,6 +89,7 @@ public class Main {
             Event toEdit = gson.fromJson(req.body(), Event.class);
             toEdit.id = id;
             Event origin = idMap.get(id);
+            //if the date of the events has been changed
             if (!origin.date.equals(toEdit.date)) {
                 map.get(origin.date).remove(id);
                 HashSet<String> set = map.getOrDefault(toEdit.date, new HashSet<>());
@@ -97,6 +100,7 @@ public class Main {
             res.header("res","success");
             return "[Success]Event-" + id + "has been updated";
         });
+        /*Function: Delete an Event given the event id*/
         delete("/events", (req, res) -> {
             String id = req.queryParams("id");
             if (id == null || !idMap.containsKey(id)) {
@@ -110,6 +114,7 @@ public class Main {
             res.header("res","success");
             return "[Success]Event-"+id+"has been deleted";
         });
+        /*Function: Get an Event list given a particular date*/
         get("/events", (req, res)->{
             String date = req.queryParams("date");
             if (date == null) {
